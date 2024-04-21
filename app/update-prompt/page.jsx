@@ -7,7 +7,7 @@ import Form from "../../components/Form";
 
 const UpdatePrompt = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { id = "" } = router.query;
 
   const [post, setPost] = useState({ prompt: "", tag: "" });
   const [submitting, setIsSubmitting] = useState(false);
