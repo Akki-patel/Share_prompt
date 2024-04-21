@@ -1,20 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/router";
 
 import Form from "../../components/Form";
 
 const UpdatePrompt = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <UpdatePromptContent />
+    </Suspense>
+  );
+};
+
+const UpdatePromptContent = () => {
   const router = useRouter();
-  const { id = "" } = router.query;
+  const searchParams = useSearchParams();
+  const promptId = searchParams.get("id");
 
   const [post, setPost] = useState({ prompt: "", tag: "" });
   const [submitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const getPromptDetails = async () => {
-      const response = await fetch(`/api/prompt/${id}`);
+      const response = await fetch(`/api/prompt/${promptId}`);
       const data = await response.json();
 
       setPost({
@@ -23,17 +32,17 @@ const UpdatePrompt = () => {
       });
     };
 
-    if (id) getPromptDetails();
-  }, [id]);
+    if (promptId) getPromptDetails();
+  }, [promptId]);
 
   const updatePrompt = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!id) return alert("Missing PromptId!");
+    if (!promptId) return alert("Missing PromptId!");
 
     try {
-      const response = await fetch(`/api/prompt/${id}`, {
+      const response = await fetch(`/api/prompt/${promptId}`, {
         method: "PATCH",
         body: JSON.stringify({
           prompt: post.prompt,
@@ -53,7 +62,7 @@ const UpdatePrompt = () => {
 
   return (
     <Form
-      type="Edit"
+      type='Edit'
       post={post}
       setPost={setPost}
       submitting={submitting}
